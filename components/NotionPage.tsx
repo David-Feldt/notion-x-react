@@ -92,6 +92,17 @@ export function NotionPage({
       <Head>
         <meta name='description' content='React Notion X Minimal Demo' />
         <title>{title}</title>
+        {/* Open Graph tags */}
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content="A minimal Notion X site by David Feldt." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://davidfeldt.info/" />
+        <meta property="og:image" content="https://davidfeldt.info/og-image.jpg" />
+        {/* Twitter Card tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content="A minimal Notion X site by David Feldt." />
+        <meta name="twitter:image" content="https://davidfeldt.info/og-image.jpg" />
       </Head>
 
       <div className="notion-frame" style={{ minHeight: '100vh', position: 'relative' }}>
