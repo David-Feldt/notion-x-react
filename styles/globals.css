@@ -1,0 +1,65 @@
+:root {
+  --bg-color: #111;
+  --text-color: #fff;
+  --notion-font: monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* Modal styles */
+.notion-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+}
+
+.notion-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.notion-modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-color);
+  color: var(--text-color);
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+  z-index: 1001;
+}
+
+.notion-page-icon-hero {
+  left: 15%;
+}
+
+/* Ensure the root element has the notion-frame class */
+#__next {
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Dark mode theme */
+.dark-mode {
+  --bg-color: #111;
+  --text-color: #fff;
+}
