@@ -38,15 +38,19 @@ function useGalleryGridPagination(itemsPerPage = 4) {
       const cards = grid.querySelectorAll('.notion-collection-card');
       // Hide all cards beyond visibleCount
       cards.forEach((card, idx) => {
-        card.style.display = idx < visibleCount ? '' : 'none';
+        if (card instanceof HTMLElement) {
+          card.style.display = idx < visibleCount ? '' : 'none';
+        }
       });
 
       // Remove any existing button
-      const existingBtn = grid.parentElement.querySelector('.load-more-gallery');
-      if (existingBtn) existingBtn.remove();
+      if (grid.parentElement) {
+        const existingBtn = grid.parentElement.querySelector('.load-more-gallery');
+        if (existingBtn) existingBtn.remove();
+      }
 
       // Add Load More button if needed
-      if (cards.length > visibleCount) {
+      if (cards.length > visibleCount && grid.parentElement) {
         const btn = document.createElement('button');
         btn.className = 'load-more-gallery';
         btn.textContent = `Load More (${visibleCount} of ${cards.length})`;
@@ -92,7 +96,7 @@ export function NotionPage({
 
       <div className="notion-frame" style={{ minHeight: '100vh', position: 'relative' }}>
         <NotionRenderer
-          recordMap={recordMap}
+          recordMap={recordMap as any}
           fullPage={true}
           darkMode={true}
           rootPageId={rootPageId}
