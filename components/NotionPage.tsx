@@ -94,15 +94,15 @@ export function NotionPage({
         <title>{title}</title>
         {/* Open Graph tags */}
         <meta property="og:title" content={title} />
-        <meta property="og:description" content="A minimal Notion X site by David Feldt." />
+        <meta property="og:description" content="David Feldt's personal website" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://davidfeldt.info/" />
-        <meta property="og:image" content="https://davidfeldt.info/og-image.jpg" />
+        <meta property="og:image" content="https://davidfeldt.info/og-image.png" />
         {/* Twitter Card tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content="A minimal Notion X site by David Feldt." />
-        <meta name="twitter:image" content="https://davidfeldt.info/og-image.jpg" />
+        <meta name="twitter:description" content="David Feldt's personal website" />
+        <meta name="twitter:image" content="https://davidfeldt.info/og-image.png" />
       </Head>
 
       <div className="notion-frame" style={{ minHeight: '100vh', position: 'relative' }}>
