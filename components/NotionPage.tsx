@@ -29,6 +29,45 @@ function CustomModal({ isOpen, onClose, children }: { isOpen: boolean; onClose: 
   )
 }
 
+function useGalleryGridPagination(itemsPerPage = 4) {
+  const [visibleCount, setVisibleCount] = useState(itemsPerPage);
+
+  useEffect(() => {
+    const grids = document.querySelectorAll('.notion-gallery-grid');
+    grids.forEach(grid => {
+      const cards = grid.querySelectorAll('.notion-collection-card');
+      // Hide all cards beyond visibleCount
+      cards.forEach((card, idx) => {
+        card.style.display = idx < visibleCount ? '' : 'none';
+      });
+
+      // Remove any existing button
+      const existingBtn = grid.parentElement.querySelector('.load-more-gallery');
+      if (existingBtn) existingBtn.remove();
+
+      // Add Load More button if needed
+      if (cards.length > visibleCount) {
+        const btn = document.createElement('button');
+        btn.className = 'load-more-gallery';
+        btn.textContent = `Load More (${visibleCount} of ${cards.length})`;
+        btn.style.cssText = `
+          display: block;
+          margin: 1rem auto;
+          padding: 8px 16px;
+          background: var(--bg-color, #111);
+          color: var(--text-color, #fff);
+          border: 1px solid var(--text-color, #fff);
+          border-radius: 4px;
+          cursor: pointer;
+          font-family: inherit;
+        `;
+        btn.onclick = () => setVisibleCount(prev => prev + itemsPerPage);
+        grid.parentElement.appendChild(btn);
+      }
+    });
+  }, [visibleCount, itemsPerPage]);
+}
+
 export function NotionPage({
   recordMap,
   rootPageId
@@ -41,6 +80,8 @@ export function NotionPage({
   }
 
   const title = getPageTitle(recordMap)
+
+  useGalleryGridPagination(4);
 
   return (
     <>
