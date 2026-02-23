@@ -79,18 +79,18 @@ export function NotionPage({
   recordMap: ExtendedRecordMap
   rootPageId?: string
 }) {
+  useGalleryGridPagination(8);
+
   if (!recordMap) {
     return null
   }
 
-  const title = getPageTitle(recordMap)
-
-  useGalleryGridPagination(4);
+  const title = getPageTitle(recordMap) || ''
 
   return (
     <>
       <Head>
-        <meta name='description' content='React Notion X Minimal Demo' />
+        <meta name='description' content='David Feldt personal website' />
         <title>{title}</title>
         {/* Open Graph tags */}
         <meta property="og:title" content={title} />

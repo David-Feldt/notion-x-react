@@ -18,7 +18,8 @@
     "notion-utils": "^4.1.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-notion-x": "^7.4.2"
+    "react-notion-x": "^7.4.2",
+    "vercel": "^50.22.1"
   },
   "devDependencies": {
     "@types/react": "^18.3.23",
