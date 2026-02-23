@@ -1,0 +1,143 @@
+diff --git a/node_modules/react-notion-x/node_modules/notion-utils/build/index.js b/node_modules/react-notion-x/node_modules/notion-utils/build/index.js
+index 5014cfb..6c2ac6b 100644
+--- a/node_modules/react-notion-x/node_modules/notion-utils/build/index.js
++++ b/node_modules/react-notion-x/node_modules/notion-utils/build/index.js
+@@ -1,3 +1,10 @@
++function __getBlockValue(block) {
++  if (!block) return undefined;
++  if (block.value) return __getBlockValue(block.value);
++  if (!block.id) return undefined;
++  return block;
++}
++
+ // src/estimate-page-read-time.ts
+ import "notion-types";
+ 
+@@ -47,7 +54,7 @@ function getBlockTitle(block, recordMap) {
+   if (block.type === "collection_view_page" || block.type === "collection_view") {
+     const collectionId = getBlockCollectionId(block, recordMap);
+     if (collectionId) {
+-      const collection = (_b = recordMap.collection[collectionId]) == null ? void 0 : _b.value;
++      const collection = __getBlockValue(recordMap.collection[collectionId]);
+       if (collection) {
+         return getTextContent(collection.name);
+       }
+@@ -66,7 +73,7 @@ var getPageTableOfContents = (page, recordMap) => {
+   function mapContentToEntries(content) {
+     return (content != null ? content : []).map((blockId) => {
+       var _a, _b;
+-      const block = (_a = recordMap.block[blockId]) == null ? void 0 : _a.value;
++      const block = __getBlockValue(recordMap.block[blockId]);
+       if (block) {
+         const { type } = block;
+         if (type === "header" || type === "sub_header" || type === "sub_sub_header") {
+@@ -145,7 +152,7 @@ function getBlockContentStats(block, recordMap) {
+     return stats;
+   }
+   for (const childId of block.content || []) {
+-    const child = (_a = recordMap.block[childId]) == null ? void 0 : _a.value;
++    const child = __getBlockValue(recordMap.block[childId]);
+     let recurse = false;
+     if (!child) continue;
+     switch (child.type) {
+@@ -239,7 +246,7 @@ function getBlockContentStats(block, recordMap) {
+         if (!referencePointerId) {
+           continue;
+         }
+-        const referenceBlock = (_d = recordMap.block[referencePointerId]) == null ? void 0 : _d.value;
++        const referenceBlock = __getBlockValue(recordMap.block[referencePointerId]);
+         if (referenceBlock) {
+           mergeContentStats(
+             stats,
+@@ -413,7 +420,7 @@ function getBlockIcon(block, recordMap) {
+   if (block.type === "collection_view_page" || block.type === "collection_view") {
+     const collectionId = getBlockCollectionId(block, recordMap);
+     if (collectionId) {
+-      const collection = (_c = recordMap.collection[collectionId]) == null ? void 0 : _c.value;
++      const collection = __getBlockValue(recordMap.collection[collectionId]);
+       if (collection) {
+         return collection.icon;
+       }
+@@ -438,9 +445,9 @@ var getBlockParentPage = (block, recordMap, {
+       break;
+     }
+     if (parentTable === "collection") {
+-      currentRecord = (_a = recordMap.collection[parentId]) == null ? void 0 : _a.value;
++      currentRecord = __getBlockValue(recordMap.collection[parentId]);
+     } else {
+-      currentRecord = (_b = recordMap.block[parentId]) == null ? void 0 : _b.value;
++      currentRecord = __getBlockValue(recordMap.block[parentId]);
+       if ((currentRecord == null ? void 0 : currentRecord.type) === "page") {
+         return currentRecord;
+       }
+@@ -460,7 +467,7 @@ function getPageProperty(propertyName, block, recordMap) {
+     if (!block.properties || !Object.keys(recordMap.collection)) {
+       return null;
+     }
+-    const collection = (_a = recordMap.collection[block.parent_id]) == null ? void 0 : _a.value;
++    const collection = __getBlockValue(recordMap.collection[block.parent_id]);
+     if (collection) {
+       const propertyNameL = propertyName.toLowerCase();
+       const propertyId = Object.keys(collection.schema).find(
+@@ -518,21 +525,21 @@ function getPageProperty(propertyName, block, recordMap) {
+ 
+ // src/normalize-title.ts
+ var normalizeTitle = (title) => {
+-  return (title || "").replaceAll(" ", "-").replaceAll(
++  return String(title ?? "").replace(/ /g, "-").replace(
+     /[^\dA-Za-z\u3000-\u303F\u3041-\u3096\u30A1-\u30FC\u4E00-\u9FFF\uAC00-\uD7AF-]/g,
+     ""
+-  ).replaceAll("--", "-").replace(/-$/, "").replace(/^-/, "").trim().toLowerCase();
++  ).replace(/--/g, "-").replace(/-$/, "").replace(/^-/, "").trim().toLowerCase();
+ };
+ 
+ // src/uuid-to-id.ts
+-var uuidToId = (uuid) => uuid.replaceAll("-", "");
++var uuidToId = (uuid) => (uuid ?? "").replace(/-/g, "");
+ 
+ // src/get-canonical-page-id.ts
+ var getCanonicalPageId = (pageId, recordMap, { uuid = true } = {}) => {
+   var _a;
+   if (!pageId || !recordMap) return null;
+   const id = uuidToId(pageId);
+-  const block = (_a = recordMap.block[pageId]) == null ? void 0 : _a.value;
++  const block = __getBlockValue(recordMap.block[pageId]);
+   if (block) {
+     const slug = getPageProperty("slug", block, recordMap) || getPageProperty("Slug", block, recordMap) || normalizeTitle(getBlockTitle(block, recordMap));
+     if (slug) {
+@@ -605,7 +612,7 @@ var getPageContentBlockIds = (recordMap, blockId) => {
+     var _a, _b, _c, _d, _e, _f;
+     if (contentBlockIds.has(blockId2)) return;
+     contentBlockIds.add(blockId2);
+-    const block = (_a = recordMap.block[blockId2]) == null ? void 0 : _a.value;
++    const block = __getBlockValue(recordMap.block[blockId2]);
+     if (!block) return;
+     const { content, type, properties, format } = block;
+     if (properties) {
+@@ -656,7 +663,7 @@ var getPageImageUrls = (recordMap, {
+   const blockIds = Object.keys(recordMap.block);
+   const imageUrls = blockIds.flatMap((blockId) => {
+     var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
+-    const block = (_a = recordMap.block[blockId]) == null ? void 0 : _a.value;
++    const block = __getBlockValue(recordMap.block[blockId]);
+     const images = [];
+     if (block) {
+       if (block.type === "image") {
+@@ -712,7 +719,7 @@ function getPageTitle(recordMap) {
+   var _a;
+   const rootBlockId = Object.keys(recordMap.block)[0];
+   if (!rootBlockId) return null;
+-  const pageBlock = (_a = recordMap.block[rootBlockId]) == null ? void 0 : _a.value;
++  const pageBlock = __getBlockValue(recordMap.block[rootBlockId]);
+   if (pageBlock) {
+     return getBlockTitle(pageBlock, recordMap);
+   }
+@@ -724,7 +731,7 @@ var getPageTweetUrls = (recordMap) => {
+   const blockIds = Object.keys(recordMap.block);
+   const tweetUrls = blockIds.map((blockId) => {
+     var _a, _b, _c, _d;
+-    const block = (_a = recordMap.block[blockId]) == null ? void 0 : _a.value;
++    const block = __getBlockValue(recordMap.block[blockId]);
+     if ((block == null ? void 0 : block.type) === "tweet") {
+       const tweetUrl = (_d = (_c = (_b = block.properties) == null ? void 0 : _b.source) == null ? void 0 : _c[0]) == null ? void 0 : _d[0];
+       if (tweetUrl) {

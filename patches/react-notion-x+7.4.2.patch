@@ -1,0 +1,352 @@
+diff --git a/node_modules/react-notion-x/build/index.js b/node_modules/react-notion-x/build/index.js
+index 4403ab4..4a17a03 100644
+--- a/node_modules/react-notion-x/build/index.js
++++ b/node_modules/react-notion-x/build/index.js
+@@ -1,3 +1,9 @@
++function __getBlockValue(block) {
++  if (!block) return undefined;
++  if (block.value) return __getBlockValue(block.value);
++  if (!block.id) return undefined;
++  return block;
++}
+ var __create = Object.create;
+ var __defProp = Object.defineProperty;
+ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+@@ -1189,7 +1195,7 @@ function Text({
+         switch (decorator[0]) {
+           case "p": {
+             const blockId = decorator[1];
+-            const linkedBlock = (_a = recordMap.block[blockId]) == null ? void 0 : _a.value;
++            const linkedBlock = __getBlockValue(recordMap.block[blockId]);
+             if (!linkedBlock) {
+               console.log('"p" missing block', blockId);
+               return null;
+@@ -1226,7 +1232,7 @@ function Text({
+                 );
+               }
+               default: {
+-                const linkedBlock = (_c = recordMap.block[id]) == null ? void 0 : _c.value;
++                const linkedBlock = __getBlockValue(recordMap.block[id]);
+                 if (!linkedBlock) {
+                   console.log('"\u2023" missing block', linkType, id);
+                   return null;
+@@ -1325,7 +1331,7 @@ function Text({
+           }
+           case "eoi": {
+             const blockId = decorator[1];
+-            const externalObjectInstance = (_e = recordMap.block[blockId]) == null ? void 0 : _e.value;
++            const externalObjectInstance = __getBlockValue(recordMap.block[blockId]);
+             return /* @__PURE__ */ jsx12(EOI, { block: externalObjectInstance, inline: true });
+           }
+           case "si":
+@@ -1811,7 +1817,7 @@ var SearchDialog = class extends React14.Component {
+         searchResult = { ...result };
+         const results = searchResult.results.map((result2) => {
+           var _a, _b;
+-          const block = (_a = searchResult.recordMap.block[result2.id]) == null ? void 0 : _a.value;
++          const block = __getBlockValue(searchResult.recordMap.block[result2.id]);
+           if (!block) return;
+           const title = getBlockTitle3(block, searchResult.recordMap);
+           if (!title) {
+@@ -2386,7 +2392,7 @@ function Block(props) {
+         } = block.format || {};
+         if (fullPage) {
+           const properties = block.type === "page" ? block.properties : {
+-            title: (_b = (_a = recordMap.collection[getBlockCollectionId(block, recordMap)]) == null ? void 0 : _a.value) == null ? void 0 : _b.name
++            title: (_a = __getBlockValue(recordMap.collection[getBlockCollectionId(block, recordMap)])) == null ? void 0 : _a.name
+           };
+           const coverPosition = (1 - (page_cover_position || 0.5)) * 100;
+           const pageCoverObjectPosition = `center ${coverPosition}%`;
+@@ -2626,7 +2632,7 @@ function Block(props) {
+         }
+       );
+       let output = null;
+-      const isTopLevel = block.type !== ((_l = (_k = recordMap.block[block.parent_id]) == null ? void 0 : _k.value) == null ? void 0 : _l.type);
++      const isTopLevel = block.type !== ((_k = __getBlockValue(recordMap.block[block.parent_id])) == null ? void 0 : _k.type);
+       const start = getListNumber(block.id, recordMap.block);
+       if (block.content) {
+         const listItem = block.properties ? /* @__PURE__ */ jsx30("li", { children: /* @__PURE__ */ jsx30(Text, { value: block.properties.title, block }) }) : null;
+@@ -2715,7 +2721,7 @@ function Block(props) {
+     case "column": {
+       const spacerWidth = `min(32px, 4vw)`;
+       const ratio = ((_o = block.format) == null ? void 0 : _o.column_ratio) || 0.5;
+-      const parent = (_p = recordMap.block[block.parent_id]) == null ? void 0 : _p.value;
++      const parent = __getBlockValue(recordMap.block[block.parent_id]);
+       const columns = ((_q = parent == null ? void 0 : parent.content) == null ? void 0 : _q.length) || Math.max(2, Math.ceil(1 / ratio));
+       const width = `calc((100% - (${columns - 1} * ${spacerWidth})) * ${ratio})`;
+       const style = { width };
+@@ -2888,7 +2894,7 @@ function Block(props) {
+       return /* @__PURE__ */ jsx30(SyncPointerBlock, { ...props, level: level + 1 });
+     case "alias": {
+       const blockPointerId = (_L = (_K = block == null ? void 0 : block.format) == null ? void 0 : _K.alias_pointer) == null ? void 0 : _L.id;
+-      const linkedBlock = (_M = recordMap.block[blockPointerId]) == null ? void 0 : _M.value;
++      const linkedBlock = __getBlockValue(recordMap.block[blockPointerId]);
+       if (!linkedBlock) {
+         console.log('"alias" missing block', blockPointerId);
+         return null;
+@@ -2905,7 +2911,7 @@ function Block(props) {
+     case "table":
+       return /* @__PURE__ */ jsx30("table", { className: cs("notion-simple-table", blockId), children: /* @__PURE__ */ jsx30("tbody", { children }) });
+     case "table_row": {
+-      const tableBlock = (_N = recordMap.block[block.parent_id]) == null ? void 0 : _N.value;
++      const tableBlock = __getBlockValue(recordMap.block[block.parent_id]);
+       const order = (_O = tableBlock.format) == null ? void 0 : _O.table_block_column_order;
+       const formatMap = (_P = tableBlock.format) == null ? void 0 : _P.table_block_column_format;
+       const backgroundColor = (_Q = block.format) == null ? void 0 : _Q.block_color;
+@@ -3037,7 +3043,7 @@ function NotionBlockRenderer({
+   var _a, _b;
+   const { recordMap } = useNotionContext();
+   const id = blockId || Object.keys(recordMap.block)[0];
+-  const block = (_a = recordMap.block[id]) == null ? void 0 : _a.value;
++  const block = __getBlockValue(recordMap.block[id]);
+   if (!block) {
+     if (true) {
+       console.warn("missing block", blockId);
+diff --git a/node_modules/react-notion-x/build/third-party/code.js b/node_modules/react-notion-x/build/third-party/code.js
+index 3b81ae5..08131f6 100644
+--- a/node_modules/react-notion-x/build/third-party/code.js
++++ b/node_modules/react-notion-x/build/third-party/code.js
+@@ -1,3 +1,9 @@
++function __getBlockValue(block) {
++  if (!block) return undefined;
++  if (block.value) return __getBlockValue(block.value);
++  if (!block.id) return undefined;
++  return block;
++}
+ var __create = Object.create;
+ var __defProp = Object.defineProperty;
+ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+@@ -743,7 +749,7 @@ var SearchDialog = class extends React8.Component {
+         searchResult = { ...result };
+         const results = searchResult.results.map((result2) => {
+           var _a, _b;
+-          const block = (_a = searchResult.recordMap.block[result2.id]) == null ? void 0 : _a.value;
++          const block = __getBlockValue(searchResult.recordMap.block[result2.id]);
+           if (!block) return;
+           const title = getBlockTitle3(block, searchResult.recordMap);
+           if (!title) {
+@@ -1901,7 +1907,7 @@ function Text({
+         switch (decorator[0]) {
+           case "p": {
+             const blockId = decorator[1];
+-            const linkedBlock = (_a = recordMap.block[blockId]) == null ? void 0 : _a.value;
++            const linkedBlock = __getBlockValue(recordMap.block[blockId]);
+             if (!linkedBlock) {
+               console.log('"p" missing block', blockId);
+               return null;
+@@ -1938,7 +1944,7 @@ function Text({
+                 );
+               }
+               default: {
+-                const linkedBlock = (_c = recordMap.block[id]) == null ? void 0 : _c.value;
++                const linkedBlock = __getBlockValue(recordMap.block[id]);
+                 if (!linkedBlock) {
+                   console.log('"\u2023" missing block', linkType, id);
+                   return null;
+@@ -2037,7 +2043,7 @@ function Text({
+           }
+           case "eoi": {
+             const blockId = decorator[1];
+-            const externalObjectInstance = (_e = recordMap.block[blockId]) == null ? void 0 : _e.value;
++            const externalObjectInstance = __getBlockValue(recordMap.block[blockId]);
+             return /* @__PURE__ */ jsx22(EOI, { block: externalObjectInstance, inline: true });
+           }
+           case "si":
+diff --git a/node_modules/react-notion-x/build/third-party/collection.js b/node_modules/react-notion-x/build/third-party/collection.js
+index 4d1a148..fd82002 100644
+--- a/node_modules/react-notion-x/build/third-party/collection.js
++++ b/node_modules/react-notion-x/build/third-party/collection.js
+@@ -1,3 +1,9 @@
++function __getBlockValue(block) {
++  if (!block) return undefined;
++  if (block.value) return __getBlockValue(block.value);
++  if (!block.id) return undefined;
++  return block;
++}
+ var __create = Object.create;
+ var __defProp = Object.defineProperty;
+ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+@@ -787,7 +793,7 @@ function Text({
+         switch (decorator[0]) {
+           case "p": {
+             const blockId = decorator[1];
+-            const linkedBlock = (_a = recordMap.block[blockId]) == null ? void 0 : _a.value;
++            const linkedBlock = __getBlockValue(recordMap.block[blockId]);
+             if (!linkedBlock) {
+               console.log('"p" missing block', blockId);
+               return null;
+@@ -824,7 +830,7 @@ function Text({
+                 );
+               }
+               default: {
+-                const linkedBlock = (_c = recordMap.block[id]) == null ? void 0 : _c.value;
++                const linkedBlock = __getBlockValue(recordMap.block[id]);
+                 if (!linkedBlock) {
+                   console.log('"\u2023" missing block', linkType, id);
+                   return null;
+@@ -923,7 +929,7 @@ function Text({
+           }
+           case "eoi": {
+             const blockId = decorator[1];
+-            const externalObjectInstance = (_e = recordMap.block[blockId]) == null ? void 0 : _e.value;
++            const externalObjectInstance = __getBlockValue(recordMap.block[blockId]);
+             return /* @__PURE__ */ jsx9(EOI, { block: externalObjectInstance, inline: true });
+           }
+           case "si":
+@@ -1046,7 +1052,7 @@ var SearchDialog = class extends React8.Component {
+         searchResult = { ...result };
+         const results = searchResult.results.map((result2) => {
+           var _a, _b;
+-          const block = (_a = searchResult.recordMap.block[result2.id]) == null ? void 0 : _a.value;
++          const block = __getBlockValue(searchResult.recordMap.block[result2.id]);
+           if (!block) return;
+           const title = getBlockTitle2(block, searchResult.recordMap);
+           if (!title) {
+@@ -5141,7 +5147,7 @@ function CollectionRow({
+   var _a, _b, _c, _d;
+   const { recordMap } = useNotionContext();
+   const collectionId = block.parent_id;
+-  const collection = (_a = recordMap.collection[collectionId]) == null ? void 0 : _a.value;
++  const collection = __getBlockValue(recordMap.collection[collectionId]);
+   const schemas = collection == null ? void 0 : collection.schema;
+   if (!collection || !schemas) {
+     return null;
+@@ -5218,7 +5224,7 @@ function CollectionCard({
+   className,
+   ...rest
+ }) {
+-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
++  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _m2;
+   const ctx2 = useNotionContext();
+   const {
+     components,
+@@ -5227,6 +5233,9 @@ function CollectionCard({
+     mapImageUrl,
+     isLinkCollectionToUrlProperty
+   } = ctx2;
++  if (!block || !(collection == null ? void 0 : collection.schema)) {
++    return null;
++  }
+   let coverContent = null;
+   const { page_cover_position = 0.5, card_cover_position = 0.5 } = block.format || {};
+   const coverPosition = (1 - page_cover_position) * 100;
+@@ -5234,11 +5243,11 @@ function CollectionCard({
+   if ((cover == null ? void 0 : cover.type) === "page_content") {
+     const contentBlockId = (_a = block.content) == null ? void 0 : _a.find((blockId) => {
+       var _a2;
+-      const block2 = (_a2 = recordMap.block[blockId]) == null ? void 0 : _a2.value;
++      const block2 = __getBlockValue(recordMap.block[blockId]);
+       return (block2 == null ? void 0 : block2.type) === "image";
+     });
+     if (contentBlockId) {
+-      const contentBlock = (_b = recordMap.block[contentBlockId]) == null ? void 0 : _b.value;
++      const contentBlock = __getBlockValue(recordMap.block[contentBlockId]);
+       const source = (_g = (_e = (_d = (_c = contentBlock.properties) == null ? void 0 : _c.source) == null ? void 0 : _d[0]) == null ? void 0 : _e[0]) != null ? _g : (_f = contentBlock.format) == null ? void 0 : _f.display_source;
+       if (source) {
+         const src = mapImageUrl(source, contentBlock);
+@@ -5579,7 +5588,7 @@ function Board({
+           }
+           return /* @__PURE__ */ jsx52("div", { className: "notion-board-group", children: (_e = group.blockIds) == null ? void 0 : _e.map((blockId) => {
+             var _a3, _b3;
+-            const block = (_a3 = recordMap.block[blockId]) == null ? void 0 : _a3.value;
++            const block = __getBlockValue(recordMap.block[blockId]);
+             if (!block) return null;
+             return /* @__PURE__ */ jsx52(
+               CollectionCard,
+@@ -5657,7 +5666,7 @@ function Gallery({
+       ),
+       children: blockIds == null ? void 0 : blockIds.map((blockId) => {
+         var _a, _b;
+-        const block = (_a = recordMap.block[blockId]) == null ? void 0 : _a.value;
++        const block = __getBlockValue(recordMap.block[blockId]);
+         if (!block) return null;
+         return /* @__PURE__ */ jsx53(
+           CollectionCard,
+@@ -5713,7 +5722,7 @@ function List({
+   const { components, recordMap, mapPageUrl } = useNotionContext();
+   return /* @__PURE__ */ jsx54("div", { className: "notion-list-collection", children: /* @__PURE__ */ jsx54("div", { className: "notion-list-view", children: /* @__PURE__ */ jsx54("div", { className: "notion-list-body", children: blockIds == null ? void 0 : blockIds.map((blockId) => {
+     var _a, _b, _c, _d;
+-    const block = (_a = recordMap.block[blockId]) == null ? void 0 : _a.value;
++    const block = __getBlockValue(recordMap.block[blockId]);
+     if (!block) return null;
+     const titleSchema = collection.schema.title;
+     const titleData = (_b = block == null ? void 0 : block.properties) == null ? void 0 : _b.title;
+@@ -6011,7 +6020,7 @@ function Table({
+     /* @__PURE__ */ jsx55("div", { className: "notion-table-body", children: blockIds == null ? void 0 : blockIds.map((blockId) => /* @__PURE__ */ jsx55("div", { className: "notion-table-row", children: properties.map((p) => {
+       var _a2, _b, _c;
+       const schema = (_a2 = collection.schema) == null ? void 0 : _a2[p.property];
+-      const block = (_b = recordMap.block[blockId]) == null ? void 0 : _b.value;
++      const block = __getBlockValue(recordMap.block[blockId]);
+       const data = (_c = block == null ? void 0 : block.properties) == null ? void 0 : _c[p.property];
+       const isTitle = p.property === "title";
+       const style = {};
+@@ -6128,8 +6137,8 @@ function CollectionViewBlock({
+   if (isServer2) {
+     windowWidth = 1024;
+   }
+-  const collection = (_a = recordMap.collection[collectionId]) == null ? void 0 : _a.value;
+-  const collectionView = (_b = recordMap.collection_view[collectionViewId]) == null ? void 0 : _b.value;
++  const collection = __getBlockValue(recordMap.collection[collectionId]);
++  const collectionView = __getBlockValue(recordMap.collection_view[collectionViewId]);
+   const collectionData = (_c = recordMap.collection_query[collectionId]) == null ? void 0 : _c[collectionViewId];
+   const parentPage = getBlockParentPage2(block, recordMap);
+   const { width, padding } = React20.useMemo(() => {
+@@ -6230,7 +6239,7 @@ function CollectionViewTabs({
+         children: /* @__PURE__ */ jsx57(
+           CollectionViewColumnDesc,
+           {
+-            collectionView: (_a = recordMap.collection_view[viewId]) == null ? void 0 : _a.value
++            collectionView: __getBlockValue(recordMap.collection_view[viewId])
+           }
+         )
+       },
+diff --git a/node_modules/react-notion-x/build/third-party/equation.js b/node_modules/react-notion-x/build/third-party/equation.js
+index 7648ac6..9e222d4 100644
+--- a/node_modules/react-notion-x/build/third-party/equation.js
++++ b/node_modules/react-notion-x/build/third-party/equation.js
+@@ -1,3 +1,9 @@
++function __getBlockValue(block) {
++  if (!block) return undefined;
++  if (block.value) return __getBlockValue(block.value);
++  if (!block.id) return undefined;
++  return block;
++}
+ var __create = Object.create;
+ var __defProp = Object.defineProperty;
+ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+@@ -809,7 +815,7 @@ function Text({
+         switch (decorator[0]) {
+           case "p": {
+             const blockId = decorator[1];
+-            const linkedBlock = (_a = recordMap.block[blockId]) == null ? void 0 : _a.value;
++            const linkedBlock = __getBlockValue(recordMap.block[blockId]);
+             if (!linkedBlock) {
+               console.log('"p" missing block', blockId);
+               return null;
+@@ -846,7 +852,7 @@ function Text({
+                 );
+               }
+               default: {
+-                const linkedBlock = (_c = recordMap.block[id]) == null ? void 0 : _c.value;
++                const linkedBlock = __getBlockValue(recordMap.block[id]);
+                 if (!linkedBlock) {
+                   console.log('"\u2023" missing block', linkType, id);
+                   return null;
+@@ -945,7 +951,7 @@ function Text({
+           }
+           case "eoi": {
+             const blockId = decorator[1];
+-            const externalObjectInstance = (_e = recordMap.block[blockId]) == null ? void 0 : _e.value;
++            const externalObjectInstance = __getBlockValue(recordMap.block[blockId]);
+             return /* @__PURE__ */ jsx12(EOI, { block: externalObjectInstance, inline: true });
+           }
+           case "si":
+@@ -1068,7 +1074,7 @@ var SearchDialog = class extends React11.Component {
+         searchResult = { ...result };
+         const results = searchResult.results.map((result2) => {
+           var _a, _b;
+-          const block = (_a = searchResult.recordMap.block[result2.id]) == null ? void 0 : _a.value;
++          const block = __getBlockValue(searchResult.recordMap.block[result2.id]);
+           if (!block) return;
+           const title = getBlockTitle3(block, searchResult.recordMap);
+           if (!title) {

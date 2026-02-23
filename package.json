@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "patch-package",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -16,6 +17,7 @@
     "notion-client": "^4.1.5",
     "notion-types": "^4.1.5",
     "notion-utils": "^4.1.5",
+    "patch-package": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-notion-x": "^7.4.2",
